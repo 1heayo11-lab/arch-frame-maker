@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ARCH 속성 프레임</title>
+<meta name="description" content="ARCH 테마 속성 프레임 메이커 — 사진은 그대로 두고 7속성 이펙트 틀, 메달리온, 코드네임·랭크 프로필을 씌워 GIF·MP4·PNG로 저장해요.">
+<meta property="og:title" content="ARCH 속성 프레임">
+<meta property="og:description" content="사진은 그대로 두고, 속성 틀만 움직이는 루프 메이커">
+<meta name="theme-color" content="#111317">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23111317'/%3E%3Cpath d='M16 3 L18 14 L29 16 L18 18 L16 29 L14 18 L3 16 L14 14 Z' fill='%23F2F4F8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Michroma&family=Hahmlet:wght@300;400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Marcellus+SC&family=Italiana&family=Syncopate:wght@400;700&family=Tenor+Sans&family=Oswald:wght@400;500;600;700&family=Bebas+Neue&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@400;700;800&family=Song+Myung&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Black+Han+Sans&family=Do+Hyeon&family=Nanum+Pen+Script&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <img class="brand-logo" id="brandLogo" alt="ARCH">
+      <div class="brand-txt">
+        <div class="brand-en">ATTRIBUTE FRAME MAKER</div>
+        <div class="brand-kr">사진은 그대로 두고, 속성 틀만 움직이는 루프 메이커</div>
+      </div>
+    </div>
+    <button class="btn line sm" type="button" id="resetAll">처음 상태로</button>
+  </header>
+  <div class="rule"></div>
+
+  <main class="app">
+    <section class="viewer" aria-label="미리보기">
+      <div class="stage" id="stage">
+        <canvas id="view" aria-label="ARCH 속성 프레임 미리보기"></canvas>
+        <div class="drop" id="drop" hidden>놓으면 사진이 들어가요</div>
+      </div>
+      <div class="transport">
+        <button class="icon-btn" type="button" id="playBtn" aria-label="멈춤"></button>
+        <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="장면 위치">
+        <span class="time" id="timeTxt"><b>0.0</b> / 4.0초</span>
+        <button class="btn line sm" type="button" id="toSave">저장하기</button>
+      </div>
+      <p class="hint">미리보기에서 사진을 끌면 위치가, 휠이나 두 손가락으로 크기가 바뀌어요. 글자도 끌어서 옮길 수 있고, 사진 파일을 미리보기 위로 끌어다 놓아도 들어가요.</p>
+    </section>
+
+    <aside class="side">
+      <details class="sec" id="secPhotos" open>
+        <summary><span class="en">PHOTOS</span><span class="kr">사진</span><span class="badge" id="bPhotos"></span></summary>
+        <div class="sec-body">
+          <div class="batch">
+            <button class="btn primary" type="button" id="addMany">여러 장 한번에 넣기</button>
+            <button class="btn line sm" type="button" id="clearSamples" hidden>예시 사진 비우기</button>
+          </div>
+          <p class="note">여러 장을 고르면 1번부터 차례로 들어가요. 한 칸만 바꾸려면 그 칸의 <b>사진 넣기</b>를 눌러 주세요. 사진은 움직이지 않고 그대로 고정돼요. 사진 1장에 두 사람이 함께 있으면 <b>두 명 (투샷)</b>을 골라 주세요.</p>
+          <div class="row"><span class="k">사진 수</span><div class="v"><div class="seg mono" id="s-count" data-k="layout.count" data-num><button type="button" data-v="1">1</button><button type="button" data-v="2">2</button><button type="button" data-v="3">3</button><button type="button" data-v="4">4</button></div></div></div>
+          <div class="row"><span class="k">배치</span><div class="v"><div class="seg" id="s-mode" data-k="layout.mode"><button type="button" data-v="side">나란히</button><button type="button" data-v="slant">사선으로 나누기</button></div></div></div>
+          <div class="row"><span class="k">사진 비율</span><div class="v"><div class="seg mono" id="s-sratio" data-k="layout.slotRatio"><button type="button" data-v="3:4">3:4</button><button type="button" data-v="4:5">4:5</button><button type="button" data-v="2:3">2:3</button><button type="button" data-v="1:1">1:1</button><button type="button" data-v="4:3">4:3</button><button type="button" data-v="fill">꽉</button></div></div></div>
+          <div class="row" id="rowGap"><span class="k">사진 간격</span><div class="v"><label class="rng"><input type="range" id="r-gap" data-k="layout.gap" min="16" max="200" step="2" data-fmt="px"><output></output></label></div></div>
+          <div class="row" id="rowSlant" hidden><span class="k">사선 기울기</span><div class="v"><label class="rng"><input type="range" id="r-slant" data-k="layout.slant" min="0" max="0.45" step="0.01" data-fmt="pct"><output></output></label></div></div>
+          <div class="row"><span class="k">모서리</span><div class="v"><div class="seg" id="s-shape" data-k="layout.shape"><button type="button" data-v="chamfer">깎은 모서리</button><button type="button" data-v="square">직각</button><button type="button" data-v="round">둥글게</button></div></div></div>
+          <div class="slot-list" id="slotList"></div>
+          <div class="sub-h">PROFILE · 프로필 표시</div>
+          <div class="row"><span class="k">위치</span><div class="v"><div class="seg" id="s-cap" data-k="caption.show"><button type="button" data-v="inside">사진 안쪽</button><button type="button" data-v="below">사진 아래</button><button type="button" data-v="none">숨기기</button></div></div></div>
+          <div class="row"><span class="k">넣을 정보</span><div class="v chks">
+            <label class="chk"><input type="checkbox" id="c-attrline" data-k="caption.attrLine"><span>속성</span></label>
+            <label class="chk"><input type="checkbox" id="c-capcls" data-k="caption.cls"><span>센티넬/가이드</span></label>
+            <label class="chk"><input type="checkbox" id="c-caprank" data-k="caption.rank"><span>랭크</span></label>
+          </div></div>
+          <div class="row" id="rowPStyle"><span class="k">프로필 색</span><div class="v"><div class="seg" id="s-pstyle" data-k="caption.style"><button type="button" data-v="auto">바탕 따라</button><button type="button" data-v="dark">다크</button><button type="button" data-v="light">화이트</button></div></div></div>
+          <div class="row" id="rowShade"><span class="k">사진 아래</span><div class="v"><label class="chk"><input type="checkbox" id="c-shade" data-k="caption.shade"><span>글자 뒤에 깔기 (다크는 검게, 화이트는 희게)</span></label></div></div>
+          <div class="row"><span class="k">코드네임 글꼴</span><div class="v"><select id="sel-capfont" data-k="caption.font"></select></div></div>
+          <div class="row"><span class="k">크기</span><div class="v"><label class="rng"><input type="range" id="r-capsize" data-k="caption.size" min="20" max="96" step="1" data-fmt="px"><output></output></label></div></div>
+          <div class="row"><span class="k">글자 간격</span><div class="v"><label class="rng"><input type="range" id="r-capsp" data-k="caption.spacing" min="0" max="0.6" step="0.01" data-fmt="em"><output></output></label></div></div>
+        </div>
+      </details>
+
+      <details class="sec" id="secCanvas" open>
+        <summary><span class="en">CANVAS</span><span class="kr">바탕 · 화면 · 루프</span><span class="badge" id="bCanvas"></span></summary>
+        <div class="sec-body">
+          <div class="row"><span class="k">바탕</span><div class="v"><div class="seg" id="s-tone" data-k="tone"><button type="button" data-v="obsidian">다크</button><button type="button" data-v="album">화이트</button><button type="button" data-v="attr">속성 그라데이션</button><button type="button" data-v="custom">색 선택</button></div></div></div>
+          <div class="row" id="rowAttrBg"><span class="k">그라데이션</span><div class="v"><div class="seg" id="s-attrbg" data-k="attrBg"><button type="button" data-v="dark">어둡게</button><button type="button" data-v="light">밝게</button></div></div></div>
+          <div class="row" id="rowToneColor"><span class="k">바탕 색</span><div class="v"><div class="swatches" id="toneSwatches"></div><input type="color" id="c-tonecolor" data-k="toneColor" aria-label="바탕 색 직접 고르기"></div></div>
+          <div class="row"><span class="k">화면 비율</span><div class="v"><div class="seg mono" id="s-ratio" data-k="ratio"><button type="button" data-v="16:9">16:9</button><button type="button" data-v="2:1">2:1</button><button type="button" data-v="3:1">3:1</button><button type="button" data-v="4:3">4:3</button><button type="button" data-v="1:1">1:1</button><button type="button" data-v="4:5">4:5</button></div></div></div>
+
+          <div class="row"><span class="k">루프 길이</span><div class="v"><label class="rng"><input type="range" id="r-loop" data-k="loop" min="2" max="8" step="0.5" data-fmt="s"><output></output></label></div></div>
+          <div class="row"><span class="k">움직임</span><div class="v"><div class="seg" id="s-tempo" data-k="tempo" data-num><button type="button" data-v="0.6">느리게</button><button type="button" data-v="1">보통</button><button type="button" data-v="1.5">빠르게</button></div></div></div>
+          <p class="note">모든 움직임이 루프 길이 안에서 정확히 한 바퀴 돌아요. 그래서 처음과 끝이 끊김 없이 이어져요.</p>
+        </div>
+      </details>
+      <details class="sec" id="secFrame" open>
+        <summary><span class="en">FRAME</span><span class="kr">속성 틀</span><span class="badge" id="bFrame"></span></summary>
+        <div class="sec-body">
+          <div class="row"><span class="k">틀 방식</span><div class="v"><div class="seg" id="s-fmode" data-k="frame.mode"><button type="button" data-v="blend">반반 섞기</button><button type="button" data-v="each">사진마다</button><button type="button" data-v="group">사진별로 나누기</button></div></div></div>
+          <p class="note" id="frameNote"></p>
+          <div class="row" id="rowBlend"><span class="k">섞이는 폭</span><div class="v"><label class="rng"><input type="range" id="r-blend" data-k="frame.blend" min="0.1" max="1" step="0.05" data-fmt="pct"><output></output></label></div></div>
+          <div class="row"><span class="k">이펙트 세기</span><div class="v"><label class="rng"><input type="range" id="r-int" data-k="frame.intensity" min="0.3" max="1.6" step="0.05" data-fmt="x"><output></output></label></div></div>
+          <div class="row"><span class="k">퍼지는 범위</span><div class="v"><label class="rng"><input type="range" id="r-reach" data-k="frame.reach" min="0.5" max="1.7" step="0.05" data-fmt="x"><output></output></label></div></div>
+          <div class="row"><span class="k">빛 번짐</span><div class="v"><label class="rng"><input type="range" id="r-bloom" data-k="frame.bloom" min="0" max="1.6" step="0.05" data-fmt="x"><output></output></label></div></div>
+          <div class="row"><span class="k">장식</span><div class="v chks">
+            <label class="chk"><input type="checkbox" id="c-base" data-k="frame.base"><span>기본 선</span></label>
+            <label class="chk"><input type="checkbox" id="c-brk" data-k="frame.brackets"><span>모서리 꺾쇠</span></label>
+            <label class="chk"><input type="checkbox" id="c-inner" data-k="frame.inner"><span>사진 안쪽 속성빛</span></label>
+          </div></div>
+        </div>
+      </details>
+
+      <details class="sec" id="secEmblem" open>
+        <summary><span class="en">EMBLEM</span><span class="kr">속성 로고</span><span class="badge" id="bEmblem"></span></summary>
+        <div class="sec-body">
+          <div class="row"><span class="k">보이기</span><div class="v"><label class="chk"><input type="checkbox" id="c-emshow" data-k="emblem.show"><span>속성 로고 넣기</span></label></div></div>
+          <div class="row"><span class="k">자리</span><div class="v"><div class="seg" id="s-emplace" data-k="emblem.place"><button type="button" data-v="corner">틀 모서리</button><button type="button" data-v="side">화면 양옆</button></div></div></div>
+          <div class="row" id="rowCorner"><span class="k">모서리에</span><div class="v"><div class="seg" id="s-emcorner" data-k="emblem.corner"><button type="button" data-v="straddle">걸치기</button><button type="button" data-v="inside">안쪽으로</button><button type="button" data-v="outside">바깥으로</button></div></div></div>
+          <div class="row"><span class="k" id="kEmL">왼쪽 위</span><div class="v"><div class="attrs" id="emL"></div></div></div>
+          <div class="row"><span class="k" id="kEmR">오른쪽 아래</span><div class="v"><div class="attrs" id="emR"></div></div></div>
+          <div class="row" id="rowEmStyle"><span class="k">모양</span><div class="v"><div class="seg" id="s-emstyle" data-k="emblem.style"><button type="button" data-v="ring">나침반 링</button><button type="button" data-v="badge">마름모</button><button type="button" data-v="simple">로고만</button></div></div></div>
+          <div class="row"><span class="k">크기</span><div class="v"><label class="rng"><input type="range" id="r-emsize" data-k="emblem.size" min="0.6" max="1.4" step="0.02" data-fmt="x"><output></output></label></div></div>
+          <div class="row" id="rowEmY"><span class="k">높이</span><div class="v"><label class="rng"><input type="range" id="r-emy" data-k="emblem.y" min="0.25" max="0.75" step="0.01" data-fmt="pct"><output></output></label></div></div>
+          <div class="row"><span class="k">속성 이름</span><div class="v"><div class="seg" id="s-emlab" data-k="emblem.label"><button type="button" data-v="both">영문+한글</button><button type="button" data-v="en">영문</button><button type="button" data-v="kr">한글</button><button type="button" data-v="none">없음</button></div></div></div>
+          <div class="row"><span class="k">회전</span><div class="v"><label class="chk"><input type="checkbox" id="c-spin" data-k="emblem.spin"><span>링 눈금과 바람·얼음 로고 회전</span></label></div></div>
+          <div class="row"><span class="k">랭크 배지</span><div class="v"><label class="chk"><input type="checkbox" id="c-emrank" data-k="emblem.rank"><span>속성 이름 옆에 랭크 표시</span></label></div></div>
+        </div>
+      </details>
+
+      <details class="sec" id="secText">
+        <summary><span class="en">TEXT</span><span class="kr">텍스트</span><span class="badge" id="bText"></span></summary>
+        <div class="sec-body">
+          <div class="presets" id="presets"></div>
+          <div class="tl" id="textList"></div>
+        </div>
+      </details>
+
+      <details class="sec" id="secMark">
+        <summary><span class="en">MARK</span><span class="kr">ARCH 문양</span><span class="badge" id="bMark"></span></summary>
+        <div class="sec-body">
+          <div class="chks" style="padding-block:8px">
+            <label class="chk"><input type="checkbox" id="c-sub" data-k="arch.submark"><span>서브마크 문장</span></label>
+            <label class="chk"><input type="checkbox" id="c-comp" data-k="arch.compass"><span>나침반 링</span></label>
+            <label class="chk"><input type="checkbox" id="c-beam" data-k="arch.beam"><span>가로 빛줄기</span></label>
+            <label class="chk"><input type="checkbox" id="c-wm" data-k="arch.watermark"><span>배경 로고</span></label>
+            <label class="chk"><input type="checkbox" id="c-word" data-k="arch.wordmark"><span>오른쪽 아래 로고</span></label>
+          </div>
+          <div class="row"><span class="k">문양 진하기</span><div class="v"><label class="rng"><input type="range" id="r-archop" data-k="arch.opacity" min="0.3" max="1.8" step="0.05" data-fmt="x"><output></output></label></div></div>
+          <p class="note">서브마크는 틀 모서리 로고를 쓸 때 틀 윗선 가운데에 문장처럼 박혀요. 나머지 문양은 사진 뒤와 여백에만 깔려서 사진을 가리지 않아요.</p>
+        </div>
+      </details>
+
+
+      <details class="sec" id="secExport" open>
+        <summary><span class="en">EXPORT</span><span class="kr">저장</span><span class="badge" id="bExport"></span></summary>
+        <div class="sec-body">
+          <div class="row"><span class="k">형식</span><div class="v"><div class="seg mono" id="s-fmt" data-k="exp.fmt"><button type="button" data-v="gif">GIF</button><button type="button" data-v="mp4">MP4</button><button type="button" data-v="png">PNG</button></div></div></div>
+          <div id="gifOpts">
+            <div class="row"><span class="k">맞출 용량</span><div class="v"><div class="seg" id="s-target" data-k="exp.target"><button type="button" data-v="web">X 웹 · 15MB</button><button type="button" data-v="app">X 앱 · 5MB</button></div></div></div>
+            <div class="row"><span class="k">자동 맞춤</span><div class="v"><label class="chk"><input type="checkbox" id="c-auto" data-k="exp.auto"><span>용량에 맞게 크기·프레임 조절</span></label></div></div>
+            <details class="manual" id="gifManual"><summary>직접 설정</summary>
+              <div class="row"><span class="k">가로 크기</span><div class="v"><select id="sel-gsize" data-k="exp.size" data-num><option value="1280">1280px</option><option value="1080">1080px</option><option value="960">960px</option><option value="840">840px</option><option value="720">720px</option><option value="640">640px</option><option value="480">480px</option></select></div></div>
+              <div class="row"><span class="k">초당 장면</span><div class="v"><select id="sel-gfps" data-k="exp.fps" data-num><option value="25">25fps</option><option value="20">20fps</option><option value="16.67">16.7fps</option><option value="12.5">12.5fps</option><option value="10">10fps</option></select></div></div>
+              <div class="row"><span class="k">색 수</span><div class="v"><div class="seg mono" id="s-gcol" data-k="exp.colors" data-num><button type="button" data-v="256">256</button><button type="button" data-v="128">128</button><button type="button" data-v="64">64</button></div></div></div>
+              <div class="row"><span class="k">디더링</span><div class="v"><label class="chk"><input type="checkbox" id="c-dith" data-k="exp.dither"><span>색 경계 부드럽게</span></label></div></div>
+            </details>
+          </div>
+          <div id="mp4Opts" hidden>
+            <div class="row"><span class="k">화질</span><div class="v"><div class="seg mono" id="s-mq" data-k="exp.mp4q"><button type="button" data-v="720">720p</button><button type="button" data-v="1080">1080p</button></div></div></div>
+            <div class="row"><span class="k">초당 장면</span><div class="v"><div class="seg mono" id="s-mfps" data-k="exp.mp4fps" data-num><button type="button" data-v="24">24</button><button type="button" data-v="30">30</button><button type="button" data-v="60">60</button></div></div></div>
+            <div class="row"><span class="k">반복</span><div class="v"><div class="seg mono" id="s-rep" data-k="exp.repeat" data-num><button type="button" data-v="1">×1</button><button type="button" data-v="2">×2</button><button type="button" data-v="3">×3</button></div></div></div>
+          </div>
+          <div id="pngOpts" hidden>
+            <div class="row"><span class="k">해상도</span><div class="v"><div class="seg mono" id="s-png" data-k="exp.png" data-num><button type="button" data-v="1">×1</button><button type="button" data-v="2">×2</button></div></div></div>
+            <p class="note">지금 미리보기에 멈춰 있는 장면이 한 장으로 저장돼요.</p>
+          </div>
+          <div class="ex-plan" id="planLine"></div>
+          <button class="btn primary wide" type="button" id="makeBtn">MAKE GIF</button>
+          <div class="progress" id="prog" hidden><div class="bar"><i id="progBar"></i></div><span id="progTxt">준비 중</span><button class="btn line sm" type="button" id="cancelBtn">취소</button></div>
+          <div class="result" id="result" hidden>
+            <div class="res-media" id="resMedia"></div>
+            <div class="res-info"><div class="meta"><b id="resName"></b><span id="resMeta"></span></div><button class="btn primary" type="button" id="saveBtn">파일 저장</button></div>
+            <div class="warnline" id="resWarn" hidden></div>
+          </div>
+        </div>
+      </details>
+    </aside>
+  </main>
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+<input type="file" id="fileMany" accept="image/*" multiple hidden>
+<input type="file" id="fileOne" accept="image/*" hidden>
+
+<script src="js/assets.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/state.js"></script>
+<script src="js/export.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
